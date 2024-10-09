@@ -300,56 +300,18 @@ void TCPServer::ProcessIncomingMessage(string message, int bytesReceived)
 	}
 	// Commands: add, sub, mul, div
 
-	// WHILE LOOP STARTS HERE
-
-	// Can maybe check for spaces first since all elements require them
-	// 
-	size_t firstSpace = message.find(' ');
-	size_t secondSpace = message.find(' ', firstSpace + 1);
-	
-	// does bottom line work?
-	message += secondSpace;
-
-	string firstNumber, secondNumber;
-
 	// Empty command error checks
-	if (message == "\r\n")
-	{
-		return;
-	}
-	// Missing space error
-	else if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0 || firstSpace == -1 || secondSpace == -1)
-	{
-		cout << endl << "inputted incomplete command, return empty" << endl;
-		serverMessage = "Unknown command: " + message; 	// echo
-	}
+	if (message == "\r\n") return;
+	
 	// Command checks
-	else
-	{
-		// Parse numbers
-		firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
-		secondNumber = message.substr(secondSpace + 1, message.length() - secondSpace - 1);
-		
-		cout << firstNumber << endl;
-		cout << secondNumber << endl;
-
-		// Space errors passed: one of the numbers are empty or not a number
-		if (firstNumber == "" || secondNumber == "" || !IsNumber(firstNumber) || !IsNumber(secondNumber))
-		{
-			cout << endl << "inputted incomplete command, return empty" << endl;
-			serverMessage = "Unknown command: " + message; 	// echo
-		}
-		// All good, run commands
-		else
-			serverMessage = ParseCommands(message, firstNumber, secondNumber);
-	}
+	serverMessage = ParseCommands(message);
 
 	// Message is guarenteed, safety error check
 	if (serverMessage.length() > 0)		// if we have a server message send it back to the client
 	{
 		serverMessage += "\r\n";
 		Send(&serverMessage[0], serverMessage.length());
-	}
+	}	
 }
 
 int TCPServer::GetNumberOfDigits(int number)
@@ -363,60 +325,249 @@ int TCPServer::GetNumberOfDigits(int number)
 	return r;
 }
 
-string TCPServer::ParseCommands(string message, string firstNumber, string secondNumber)
+string TCPServer::ParseCommands(string message)
 {
-	int variableA = stoi(firstNumber);
-	int variableB = stoi(secondNumber);
-	char finalOutput[ENOUGH];
+	//size_t firstSpace = message.find(' ');
+	//size_t secondSpace = message.find(' ', firstSpace + 1);
+
+	//string firstNumber, secondNumber;
+
+	//// Missing space error
+	//if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0 || firstSpace == -1 || secondSpace == -1)
+	//{
+	//	cout << endl << "inputted incomplete command, return empty" << endl;
+	//	return "Unknown command: " + message; 	// echo
+	//}
+
+	//// Parse numbers
+	//firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+	//secondNumber = message.substr(secondSpace + 1, message.length() - secondSpace - 1);
+
+	//cout << firstNumber << endl;
+	//cout << secondNumber << endl;
+
+	//// Space errors passed: one of the numbers are empty or not a number
+	//if (firstNumber == "" || secondNumber == "" || !IsNumber(firstNumber) || !IsNumber(secondNumber))
+	//{
+	//	cout << endl << "inputted incomplete command, return empty" << endl;
+	//	return "Unknown command: " + message; 	// echo
+	//}
+
+
+	//int variableA = stoi(firstNumber);
+	//int variableB = stoi(secondNumber);
+	//char finalOutput[ENOUGH];
 
 	// Check the client message to see if it matches a "command" and take appropriate action
 	if (message.find("add") == 0)				// Add command
 	{
-		int total = variableA + variableB;
-		sprintf_s(finalOutput, "%d", total);
+		string returnBuffer;
+		returnBuffer.clear();
 
-		cout << "Use has asked us to add " << variableA << " with " << variableB << " which equals: " << finalOutput << endl;
+		int buffer = 0;
+		float total = 0;
 
-		return firstNumber + " + " + secondNumber + " = " + finalOutput;
+		// Final total char setup
+		char finalOutput[ENOUGH];
+
+		while (true)
+		{
+			size_t firstSpace = message.find(' ', buffer);
+			size_t secondSpace = message.find(' ', firstSpace + 1);
+
+			string firstNumber;
+			cout << "First space: " << firstSpace << endl;
+			cout << "Second space: " << secondSpace << endl;
+
+			// Missing space error
+			if (secondSpace == -1)
+			{
+				secondSpace = message.length();
+				cout << "Second space error - reset" << endl;
+			}
+			else if (firstSpace == -1)
+				break;
+			else if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0)
+			{
+				cout << endl << "inputted incomplete command of spaces, return empty" << endl;
+				return "Unknown command: " + message; 	// echo
+			}
+
+			// Parse numbers
+			firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+
+			cout << "Read number: " + firstNumber << endl;
+
+			// Space errors passed: one of the numbers are empty or not a number
+			if (firstNumber == "" || !IsNumber(firstNumber))
+			{
+				cout << endl << "inputted numbers are not valid, return empty" << endl;
+				break;
+			}
+
+			// string format number to int format
+			float variableA = stof(firstNumber);
+			
+			// Calculate total
+			if (buffer == 0)
+				total = variableA;
+			else
+				total += variableA;
+
+			buffer = secondSpace;
+			returnBuffer += returnBuffer.empty() ? firstNumber : " + " + firstNumber;
+		}
+		// Convert to char array
+		sprintf_s(finalOutput, "%f", total);
+		
+		return returnBuffer + " = " + finalOutput;
 	}
 	else if (message.find("sub") == 0)			// Subtract command
 	{
-		int total = variableA - variableB;
-		sprintf_s(finalOutput, "%d", total);
+		string returnBuffer;
+		returnBuffer.clear();
 
-		cout << "Use has asked us to subtract " << variableA << " with " << variableB << " which equals: " << finalOutput << endl;
+		int buffer = 0;
+		float total = 0;
 
-		return firstNumber + " - " + secondNumber + " = " + finalOutput;
+		// Final total char setup
+		char finalOutput[ENOUGH];
+
+		while (true)
+		{
+			size_t firstSpace = message.find(' ', buffer);
+			size_t secondSpace = message.find(' ', firstSpace + 1);
+
+			string firstNumber;
+			cout << "First space: " << firstSpace << endl;
+			cout << "Second space: " << secondSpace << endl;
+
+			// Missing space error
+			if (secondSpace == -1)
+			{
+				secondSpace = message.length();
+				cout << "Second space error - reset" << endl;
+			}
+			else if (firstSpace == -1)
+				break;
+			else if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0)
+			{
+				cout << endl << "inputted incomplete command of spaces, return empty" << endl;
+				return "Unknown command: " + message; 	// echo
+			}
+
+			// Parse numbers
+			firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+
+			cout << "Read number: " + firstNumber << endl;
+
+			// Space errors passed: one of the numbers are empty or not a number
+			if (firstNumber == "" || !IsNumber(firstNumber))
+			{
+				cout << endl << "inputted numbers are not valid, return empty" << endl;
+				break;
+			}
+
+			// string format number to int format
+			float variableA = stof(firstNumber);
+
+			// Calculate total
+			if (buffer == 0)
+				total = variableA;
+			else
+				total -= variableA;
+
+			buffer = secondSpace;
+			returnBuffer += returnBuffer.empty() ? firstNumber : " - " + firstNumber;
+		}
+		// Convert to char array
+		sprintf_s(finalOutput, "%f", total);
+
+		return returnBuffer + " = " + finalOutput;
 	}
 	else if (message.find("mul") == 0)			// Multiply command
 	{
-		int total = variableA * variableB;
-		sprintf_s(finalOutput, "%d", total);
+		string returnBuffer;
+		returnBuffer.clear();
 
-		cout << "Use has asked us to multiply " << variableA << " with " << variableB << " which equals: " << finalOutput << endl;
+		int buffer = 0;
+		float total = 0;
 
-		return firstNumber + " x " + secondNumber + " = " + finalOutput;
-	}
-	else if (message.find("div") == 0)			// Divide command
-	{
-		// Cannot divide by 0 error check
-		if (variableB == 0)
+		// Final total char setup
+		char finalOutput[ENOUGH];
+
+		while (true)
 		{
-			cout << "Attempted to divide by 0 : ERROR" << endl;
-			return  "Attempted to divide by 0 : ERROR";
+			size_t firstSpace = message.find(' ', buffer);
+			size_t secondSpace = message.find(' ', firstSpace + 1);
+
+			string firstNumber;
+			cout << "First space: " << firstSpace << endl;
+			cout << "Second space: " << secondSpace << endl;
+
+			// Missing space error
+			if (secondSpace == -1)
+			{
+				secondSpace = message.length();
+				cout << "Second space error - reset" << endl;
+			}
+			else if (firstSpace == -1)
+				break;
+			else if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0)
+			{
+				cout << endl << "inputted incomplete command of spaces, return empty" << endl;
+				return "Unknown command: " + message; 	// echo
+			}
+
+			// Parse numbers
+			firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+
+			cout << "Read number: " + firstNumber << endl;
+
+			// Space errors passed: one of the numbers are empty or not a number
+			if (firstNumber == "" || !IsNumber(firstNumber))
+			{
+				cout << endl << "inputted numbers are not valid, return empty" << endl;
+				break;
+			}
+
+			// string format number to int format
+			float variableA = stof(firstNumber);
+
+			// Calculate total
+			if (buffer == 0)
+				total = variableA;
+			else
+				total *= variableA;
+
+			buffer = secondSpace;
+			returnBuffer += returnBuffer.empty() ? firstNumber : " x " + firstNumber;
 		}
-
-		// Must be float to see decimals
-		float variableA = stof(firstNumber);
-		float variableB = stof(secondNumber);
-
-		float total = variableA / variableB;
+		// Convert to char array
 		sprintf_s(finalOutput, "%f", total);
 
-		cout << "Use has asked us to divide " << variableA << " with " << variableB << " which equals: " << finalOutput << endl;
-
-		return firstNumber + " / " + secondNumber + " = " + finalOutput;
+		return returnBuffer + " = " + finalOutput;
 	}
+	//else if (message.find("div") == 0)			// Divide command
+	//{
+	//	// Cannot divide by 0 error check
+	//	if (variableB == 0)
+	//	{
+	//		cout << "Attempted to divide by 0 : ERROR" << endl;
+	//		return  "Attempted to divide by 0 : ERROR";
+	//	}
+
+	//	// Must be float to see decimals
+	//	float variableA = stof(firstNumber);
+	//	float variableB = stof(secondNumber);
+
+	//	float total = variableA / variableB;
+	//	sprintf_s(finalOutput, "%f", total);
+
+	//	cout << "Use has asked us to divide " << variableA << " with " << variableB << " which equals: " << finalOutput << endl;
+
+	//	return firstNumber + " / " + secondNumber + " = " + finalOutput;
+	//}
 	else										// Error pass check
 	{
 		if (echo && (message != "\r\n"))
@@ -428,10 +579,20 @@ bool TCPServer::IsNumber(string input)
 {
 	int i = input.length();
 	bool isnum = (i > 0);
+	bool decimalFound = FALSE;
 
 	while (i-- && isnum) {
-		if (i == 0 && input[i] == '-')
+		if (i == 0 && input[i] == '-' )
 			continue;
+		if (input[i] == '.') {
+			if (decimalFound)
+				return false;
+			else
+			{
+				decimalFound = true;
+				continue;
+			}
+		}
 		if (!(input[i] >= '0' && input[i] <= '9'))
 			return false;
 	}

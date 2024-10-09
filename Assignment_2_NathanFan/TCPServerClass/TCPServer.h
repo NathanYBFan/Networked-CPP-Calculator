@@ -32,7 +32,7 @@ class TCPServer
 		void AcceptClient();
 		void Send(char buf[], int bytesSent);
 		int GetNumberOfDigits(int number);
-		string ParseCommands(string message, string firstNumber, string secondNumber);
+		string ParseCommands(string message);
 		bool IsNumber(string n);
 	public:
 		TCPServer();
