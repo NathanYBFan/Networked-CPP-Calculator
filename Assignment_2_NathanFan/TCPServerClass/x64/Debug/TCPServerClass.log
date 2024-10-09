@@ -1,11 +1,13 @@
 ﻿  TCPServer.cpp
 C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(106,14): warning C4553: '==': result of expression not used; did you intend '='?
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(313,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(292,6): warning C4101: 'sent': unreferenced local variable
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(417,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(480,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(543,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(580,8): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(189,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(318,47): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(297,6): warning C4101: 'sent': unreferenced local variable
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(389,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(441,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(493,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(549,13): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(566,8): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(59,1): warning C4715: 'TCPServer::Initialize': not all control paths return a value
-C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(576,1): warning C4715: 'TCPServer::ParseCommands': not all control paths return a value
+C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\TCPServerClass\TCPServer.cpp(562,1): warning C4715: 'TCPServer::ParseCommands': not all control paths return a value
   TCPServerClass.vcxproj -> C:\Users\nf21dl\Documents\GitHub\NetworkingNC_Assignment_2\Assignment_2_NathanFan\x64\Debug\TCPServerClass.exe

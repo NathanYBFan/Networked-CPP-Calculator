@@ -182,6 +182,11 @@ void TCPServer::Receive()
 	if (verbose)
 	{
 		cout << ">>> Server actively receiving and sending messages..." << endl;
+
+		// Intro message:
+		string stringMessage = "      Wecome to ACS (Awesome Calculator Server)\r\n----------------------------------------------------\r\nSupported commands: \"add\", \"sub\", \"mul\", \"div\"\r\nUsage: command # # # ...\r\nUsage sample: add 2 2 yields \"2 + 2 = 4\"\r\nGo a head, give it a whirl!\r\n\r\n";
+
+		Send(&stringMessage[0], stringMessage.length());
 	}
 
 	while (isClientConnected)
@@ -298,13 +303,13 @@ void TCPServer::ProcessIncomingMessage(string message, int bytesReceived)
 			cout << "Received: " << bytesReceived << " byte[s] with message " << message << endl;	// we received some bytes so output them to the console
 		}
 	}
-	// Commands: add, sub, mul, div
 
 	// Empty command error checks
 	if (message == "\r\n") return;
 	
 	// Command checks
-	serverMessage = ParseCommands(message);
+	// Commands: add, sub, mul, div
+	serverMessage = "\r\nProcessing calculation ...\r\n" + ParseCommands(message) + "\r\n";
 
 	// Message is guarenteed, safety error check
 	if (serverMessage.length() > 0)		// if we have a server message send it back to the client
@@ -327,57 +332,24 @@ int TCPServer::GetNumberOfDigits(int number)
 
 string TCPServer::ParseCommands(string message)
 {
-	//size_t firstSpace = message.find(' ');
-	//size_t secondSpace = message.find(' ', firstSpace + 1);
+	string returnBuffer;
+	returnBuffer.clear();
 
-	//string firstNumber, secondNumber;
+	int buffer = 0;
+	float total = 0;
 
-	//// Missing space error
-	//if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0 || firstSpace == -1 || secondSpace == -1)
-	//{
-	//	cout << endl << "inputted incomplete command, return empty" << endl;
-	//	return "Unknown command: " + message; 	// echo
-	//}
-
-	//// Parse numbers
-	//firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
-	//secondNumber = message.substr(secondSpace + 1, message.length() - secondSpace - 1);
-
-	//cout << firstNumber << endl;
-	//cout << secondNumber << endl;
-
-	//// Space errors passed: one of the numbers are empty or not a number
-	//if (firstNumber == "" || secondNumber == "" || !IsNumber(firstNumber) || !IsNumber(secondNumber))
-	//{
-	//	cout << endl << "inputted incomplete command, return empty" << endl;
-	//	return "Unknown command: " + message; 	// echo
-	//}
-
-
-	//int variableA = stoi(firstNumber);
-	//int variableB = stoi(secondNumber);
-	//char finalOutput[ENOUGH];
+	// Final total char setup
+	char finalOutput[ENOUGH];
 
 	// Check the client message to see if it matches a "command" and take appropriate action
 	if (message.find("add") == 0)				// Add command
 	{
-		string returnBuffer;
-		returnBuffer.clear();
-
-		int buffer = 0;
-		float total = 0;
-
-		// Final total char setup
-		char finalOutput[ENOUGH];
-
 		while (true)
 		{
+			string firstNumber;
+			
 			size_t firstSpace = message.find(' ', buffer);
 			size_t secondSpace = message.find(' ', firstSpace + 1);
-
-			string firstNumber;
-			cout << "First space: " << firstSpace << endl;
-			cout << "Second space: " << secondSpace << endl;
 
 			// Missing space error
 			if (secondSpace == -1)
@@ -424,23 +396,12 @@ string TCPServer::ParseCommands(string message)
 	}
 	else if (message.find("sub") == 0)			// Subtract command
 	{
-		string returnBuffer;
-		returnBuffer.clear();
-
-		int buffer = 0;
-		float total = 0;
-
-		// Final total char setup
-		char finalOutput[ENOUGH];
-
 		while (true)
 		{
+			string firstNumber;
+			
 			size_t firstSpace = message.find(' ', buffer);
 			size_t secondSpace = message.find(' ', firstSpace + 1);
-
-			string firstNumber;
-			cout << "First space: " << firstSpace << endl;
-			cout << "Second space: " << secondSpace << endl;
 
 			// Missing space error
 			if (secondSpace == -1)
@@ -487,23 +448,12 @@ string TCPServer::ParseCommands(string message)
 	}
 	else if (message.find("mul") == 0)			// Multiply command
 	{
-		string returnBuffer;
-		returnBuffer.clear();
-
-		int buffer = 0;
-		float total = 0;
-
-		// Final total char setup
-		char finalOutput[ENOUGH];
-
 		while (true)
 		{
+			string firstNumber;
+			
 			size_t firstSpace = message.find(' ', buffer);
 			size_t secondSpace = message.find(' ', firstSpace + 1);
-
-			string firstNumber;
-			cout << "First space: " << firstSpace << endl;
-			cout << "Second space: " << secondSpace << endl;
 
 			// Missing space error
 			if (secondSpace == -1)
@@ -548,26 +498,62 @@ string TCPServer::ParseCommands(string message)
 
 		return returnBuffer + " = " + finalOutput;
 	}
-	//else if (message.find("div") == 0)			// Divide command
-	//{
-	//	// Cannot divide by 0 error check
-	//	if (variableB == 0)
-	//	{
-	//		cout << "Attempted to divide by 0 : ERROR" << endl;
-	//		return  "Attempted to divide by 0 : ERROR";
-	//	}
+	else if (message.find("div") == 0)			// Divide command
+	{
+		while (true)
+		{
+			string firstNumber;
 
-	//	// Must be float to see decimals
-	//	float variableA = stof(firstNumber);
-	//	float variableB = stof(secondNumber);
+			size_t firstSpace = message.find(' ', buffer);
+			size_t secondSpace = message.find(' ', firstSpace + 1);
 
-	//	float total = variableA / variableB;
-	//	sprintf_s(finalOutput, "%f", total);
+			// Missing space error
+			if (secondSpace == -1)
+			{
+				secondSpace = message.length();
+				cout << "Second space error - reset" << endl;
+			}
+			else if (firstSpace == -1)
+				break;
+			else if ((firstSpace + 1) - (secondSpace - firstSpace - 1) == 0)
+			{
+				cout << endl << "inputted incomplete command of spaces, return empty" << endl;
+				return "Unknown command: " + message; 	// echo
+			}
+			// Parse numbers
+			firstNumber = message.substr(firstSpace + 1, secondSpace - firstSpace - 1);
 
-	//	cout << "Use has asked us to divide " << variableA << " with " << variableB << " which equals: " << finalOutput << endl;
+			cout << "Read number: " + firstNumber << endl;
 
-	//	return firstNumber + " / " + secondNumber + " = " + finalOutput;
-	//}
+			// Space errors passed: one of the numbers are empty or not a number
+			if (firstNumber == "" || !IsNumber(firstNumber))
+			{
+				cout << endl << "inputted numbers are not valid, return empty" << endl;
+				break;
+			}
+			// Cannot divide by 0 error check
+			else if (buffer != 0 && firstNumber == "0")
+			{
+				cout << "Attempted to divide by 0 : ERROR" << endl;
+				return  "Attempted to divide by 0 : ERROR";
+			}
+			// string format number to int format
+			float variableA = stof(firstNumber);
+
+			// Calculate total
+			if (buffer == 0)
+				total = variableA;
+			else
+				total /= variableA;
+
+			buffer = secondSpace;
+			returnBuffer += returnBuffer.empty() ? firstNumber : " / " + firstNumber;
+		}
+		// Convert to char array
+		sprintf_s(finalOutput, "%f", total);
+
+		return returnBuffer + " = " + finalOutput;
+	}
 	else										// Error pass check
 	{
 		if (echo && (message != "\r\n"))
@@ -582,9 +568,9 @@ bool TCPServer::IsNumber(string input)
 	bool decimalFound = FALSE;
 
 	while (i-- && isnum) {
-		if (i == 0 && input[i] == '-' )
+		if (i == 0 && input[i] == '-') // Negative signs accepted ( only once at beginning )
 			continue;
-		if (input[i] == '.') {
+		else if (input[i] == '.') { // Decimals accepted ( only once )
 			if (decimalFound)
 				return false;
 			else
@@ -593,7 +579,7 @@ bool TCPServer::IsNumber(string input)
 				continue;
 			}
 		}
-		if (!(input[i] >= '0' && input[i] <= '9'))
+		else if (!(input[i] >= '0' && input[i] <= '9'))
 			return false;
 	}
 	return true;
