@@ -1,5 +1,8 @@
 # Niagara College Networking Assignment 2
 
+## Goal
+Create a working Calculator in C++
+
 ## Summary
 Assignment 2 submission for Niagara College Game Networking: BTGD 9876
 
@@ -15,9 +18,6 @@ Rubric:
   - Multiple operands can be parsed
   - Negative numbers work
 - Errors are handled for incorrect commands (1)
-
-## Goal
-Create a working Calculator in C++
 
 ## Systems
 The Assignment requires Putty to run.
